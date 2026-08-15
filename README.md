@@ -6,6 +6,16 @@ Read **[ASSIGNMENT.md](./ASSIGNMENT.md)** for the full brief before you start.
 
 ---
 
+## Live Demo
+
+The API is deployed on **Vercel**:
+
+- Live API: https://untested-task-api.vercel.app/
+- Health Check: https://untested-task-api.vercel.app/
+- Tasks API: https://untested-task-api.vercel.app/tasks
+
+---
+
 ## A note on AI tools
 
 You're welcome to use AI tools. What we're evaluating is your ability to read and reason about unfamiliar code — so your submission should reflect your own understanding, not just generated output.
@@ -99,6 +109,15 @@ curl "http://localhost:3000/tasks?status=pending&page=1&limit=10"
 **Mark complete**
 ```bash
 curl -X PATCH http://localhost:3000/tasks/<id>/complete
+```
+
+---
+
+## Testing
+
+```bash
+npm test           # run the full test suite
+npm run coverage   # run with coverage report
 ```
 
 ---
