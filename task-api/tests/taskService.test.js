@@ -242,6 +242,28 @@ describe('taskService.completeTask', () => {
   });
 });
 
+describe('taskService.assign', () => {
+  test('happy path: assigns an assignee and returns the updated task', () => {
+    const t = taskService.create({ title: 'Owned' });
+    const updated = taskService.assign(t.id, 'Siddharth');
+    expect(updated.id).toBe(t.id);
+    expect(updated.assignee).toBe('Siddharth');
+    expect(taskService.findById(t.id).assignee).toBe('Siddharth');
+  });
+
+  test('returns null for missing id', () => {
+    expect(taskService.assign('missing', 'Siddharth')).toBeNull();
+  });
+
+  test('reassignment replaces the previous assignee', () => {
+    const t = taskService.create({ title: 'Reassign' });
+    taskService.assign(t.id, 'Alice');
+    const updated = taskService.assign(t.id, 'Bob');
+    expect(updated.assignee).toBe('Bob');
+    expect(taskService.findById(t.id).assignee).toBe('Bob');
+  });
+});
+
 describe('taskService._reset', () => {
   test('clears all tasks', () => {
     taskService.create({ title: 'A' });

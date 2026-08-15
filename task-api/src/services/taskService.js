@@ -60,6 +60,15 @@ const remove = (id) => {
   return true;
 };
 
+const assign = (id, assignee) => {
+  const index = tasks.findIndex((t) => t.id === id);
+  if (index === -1) return null;
+
+  const updated = { ...tasks[index], assignee };
+  tasks[index] = updated;
+  return updated;
+};
+
 const completeTask = (id) => {
   const task = findById(id);
   if (!task) return null;
@@ -90,5 +99,6 @@ module.exports = {
   update,
   remove,
   completeTask,
+  assign,
   _reset,
 };

@@ -76,7 +76,7 @@ Added unit and integration tests covering page 1, page 2, page 3,
 partial pages, out-of-range pages, and omitted/invalid pagination values.
 
 ### 11. Verification
-62 tests passing, 0 failures, 94.77% statement coverage.
+72 tests passing, 0 failures, 95.45% statement coverage.
 
 ---
 

@@ -262,3 +262,61 @@ describe('PATCH /tasks/:id/complete', () => {
     expect(res.body.priority).toBe('medium'); // original 'high' lost
   });
 });
+
+describe('PATCH /tasks/:id/assign (FEATURE NOT IMPLEMENTED YET)', () => {
+  function assign(id, body) {
+    return request(app).patch(`/tasks/${id}/assign`).send(body);
+  }
+
+  test('happy path: assigns a valid non-empty assignee and returns 200 with the updated task', async () => {
+    const created = taskService.create(makeTask({ title: 'Owned' }));
+    const res = await assign(created.id, { assignee: 'Siddharth' });
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe(created.id);
+    expect(res.body.assignee).toBe('Siddharth');
+    // assignee persists in the store
+    expect(taskService.findById(created.id).assignee).toBe('Siddharth');
+  });
+
+  test('nonexistent task id returns 404 with the standard error format', async () => {
+    const res = await assign('missing', { assignee: 'Siddharth' });
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: 'Task not found' });
+  });
+
+  test('missing assignee field returns 400', async () => {
+    const created = taskService.create(makeTask({ title: 'No assignee' }));
+    const res = await assign(created.id, {});
+    expect(res.status).toBe(400);
+  });
+
+  test('empty string assignee returns 400', async () => {
+    const created = taskService.create(makeTask({ title: 'Empty' }));
+    const res = await assign(created.id, { assignee: '' });
+    expect(res.status).toBe(400);
+  });
+
+  test('whitespace-only assignee returns 400', async () => {
+    const created = taskService.create(makeTask({ title: 'Spaces' }));
+    const res = await assign(created.id, { assignee: '   ' });
+    expect(res.status).toBe(400);
+  });
+
+  test('non-string assignee returns 400', async () => {
+    const created = taskService.create(makeTask({ title: 'Wrong type' }));
+    const res = await assign(created.id, { assignee: 123 });
+    expect(res.status).toBe(400);
+  });
+
+  test('reassignment replaces the previous assignee and returns 200', async () => {
+    const created = taskService.create(makeTask({ title: 'Reassign' }));
+    const first = await assign(created.id, { assignee: 'Alice' });
+    expect(first.status).toBe(200);
+    expect(first.body.assignee).toBe('Alice');
+
+    const second = await assign(created.id, { assignee: 'Bob' });
+    expect(second.status).toBe(200);
+    expect(second.body.assignee).toBe('Bob');
+    expect(taskService.findById(created.id).assignee).toBe('Bob');
+  });
+});
